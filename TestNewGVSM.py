@@ -23,7 +23,7 @@ if __name__ == '__main__':
 	tfidf_vectorizer = TfidfVectorizer('filename',stop_words='english',min_df=0.0,use_idf=True)	#scikit function to make document vectors
 	corpus_tfidf_matrix = tfidf_vectorizer.fit_transform(files)	#scikit function to calculate tf-idf matrix
 
-
+	print("corpus_tfidf_matrix: "+str(corpus_tfidf_matrix.toarray()))
 	tot_words=len(tfidf_vectorizer.vocabulary_)
 	print('tot_words '+ str(tot_words))
 	print('Enter the path of query document:')
