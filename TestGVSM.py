@@ -23,14 +23,14 @@ if __name__ == '__main__':
     #for file in files:
     #    print(str(file))
 
-    tfidf_vectorizer = TfidfVectorizer()  # scikit function to make document vectors
+    tfidf_vectorizer = TfidfVectorizer(stop_words='english',min_df=0.0,use_idf=True)  # scikit function to make document vectors
 
     vectorizer = CountVectorizer()  # 该类会将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
     transformer = TfidfTransformer()  # 该类会统计每个词语的tf-idf权值
     tfidf = transformer.fit_transform(
         vectorizer.fit_transform(corpus))  # 第一个fit_transform是计算tf-idf，第二个fit_transform是将文本转为词频矩阵
 
-    print("vectorizer transform: " + str(tfidf_vectorizer.transform(corpus).toarray()))
+    print("vectorizer transform: " + str(tfidf_vectorizer.fit_transform(corpus).toarray()))
     word = vectorizer.get_feature_names()  # 获取词袋模型中的所有词语
     weight = tfidf.toarray()  # 将tf-idf矩阵抽取出来，元素a[i][j]表示j词在i类文本中的tf-idf权重
     print("weight: "+str(weight))
