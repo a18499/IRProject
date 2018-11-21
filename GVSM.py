@@ -65,7 +65,7 @@ class GVSM:
 
         unit_vectors = []
         p = []
-        size_of_minterms = pow(2, (tot_words))  # size of GVSM vector space is 2^total_words
+       #size_of_minterms = pow(2, (tot_words))  # size of GVSM vector space is 2^total_words
 
         # Calculate the index term vectors as linear combinations of minterm vectors
         for i in range(0, tot_words):
