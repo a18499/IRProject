@@ -5,12 +5,13 @@ import threading
 
 def calculateJob(queryVector, docVector):
     gvsm = GVSM()
-    gvsm.initi( docVector, queryVector)
-    gvsm.mainProcess()
+    gvsm.initi(docVector, queryVector)
+    gvsm.mainProcessLarge()
 
 if __name__ == '__main__':
   print("test")
   corpus = [
+    'Report-International kobe word',
     'Preliminary Report-International Algebraic Language',
     'Extraction of Roots by Repeated Subtractions for Digital Computers',
     'Techniques Department on Matrix Program Schemes',
@@ -39,7 +40,8 @@ if __name__ == '__main__':
     docVector = allComment
     #gvsm.initi(docVector, query_vector)
     #gvsm.mainProcess()
-    calculateJob(query_vector, docVector)
+    large = query_vector + docVector
+    calculateJob(query_vector, large)
     #t = threading.Thread(target= calculateJob(query_vector, docVector))
     #t.start()
     #threadPool.append(t)

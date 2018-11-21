@@ -21,16 +21,10 @@ class GVSM:
 
     def mainProcessLarge(self) -> str:
 
+
         tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08,
                                            use_idf=True)  # scikit function to make document vectors
         corpus_tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)  # scikit function to calculate tf-idf matrix
-
-        test = tfidf_vectorizer.transform(queryList)  # turn into document-term matrix (tf-idf)
-
-        print("test: " + str(test.toarray()))
-        test_qur = test.todense()
-        print('tot_words query ' + str(len(tfidf_vectorizer.vocabulary_)))
-        test_qur_list = np.array(test_qur).tolist()
 
         corpus_tfidf_mat = corpus_tfidf_matrix.todense()  # matrix form of tf-idf matrix calculated above
 
@@ -81,7 +75,7 @@ class GVSM:
             newArr = myArr / magnitude
             p.append(newArr)
 
-        query_vector = np.zeros(pow(2, tot_words))
+        queryVector = np.zeros(pow(2, tot_words))
         sim = []
         count_file = 0
 
@@ -97,17 +91,17 @@ class GVSM:
                 count = count + 1
 
             if (count_file == 0):
-                query_vector += docVector  # assign query vector
+                queryVector += docVector  # assign query vector
 
-            cosine_similarity_matrix = np.vstack((query_vector, docVector))
+
+
+            cosine_similarity_matrix = np.vstack((queryVector, docVector))
 
             print("cosine_similarity_matrix " + str(cosine_similarity(cosine_similarity_matrix)))
             sim.append((cosine_similarity(cosine_similarity_matrix)[0][1],
                         os.path.basename(corpus[count_file])))  # cosine similarity
-
-            count_file += 1
-
         # sort the documents based on their similarity from highest to lowest similarity order
+            count_file += 1
         sim.sort(reverse=True)
 
         # print the documents' ranking
