@@ -33,7 +33,8 @@ class GVSM:
         corpus_tfidf = np.array(corpus_tfidf_mat).tolist()
 
         print(len(tfidf_vectorizer.vocabulary_))
-
+        if (len(tfidf_vectorizer.vocabulary_) > 26):
+            return "false"
         for key, value in sorted(tfidf_vectorizer.vocabulary_.items()):  # print the vocabulary of corpus
             print(key)
 
@@ -56,8 +57,8 @@ class GVSM:
         tot_words = len(tfidf_vectorizer.vocabulary_)
 
         p = []
-        size_of_minterms = pow(2, (tot_words))  # size of GVSM vector space is 2^total_words
-
+        #size_of_minterms = pow(2, (tot_words))  # size of GVSM vector space is 2^total_words
+        print("Calculate the index term vectors as linear combinations of minterm vectors")
         # Calculate the index term vectors as linear combinations of minterm vectors
         for i in range(0, tot_words):
             tmp_unit_vector = [0 for j in range(pow(2, tot_words))]
@@ -78,7 +79,7 @@ class GVSM:
         queryVector = np.zeros(pow(2, tot_words))
         sim = []
         count_file = 0
-
+        print("this loop constructs document and query vectors in the GVSM vector space as linear combination")
         # this loop constructs document and query vectors in the GVSM vector space as linear combination of minterm vectors and cosine similarity
         for doc in corpus_tfidf:
 
@@ -100,8 +101,9 @@ class GVSM:
             print("cosine_similarity_matrix " + str(cosine_similarity(cosine_similarity_matrix)))
             sim.append((cosine_similarity(cosine_similarity_matrix)[0][1],
                         os.path.basename(corpus[count_file])))  # cosine similarity
-        # sort the documents based on their similarity from highest to lowest similarity order
+
             count_file += 1
+        # sort the documents based on their similarity from highest to lowest similarity order
         sim.sort(reverse=True)
 
         # print the documents' ranking
@@ -111,7 +113,7 @@ class GVSM:
         return "success"
     def mainProcess(self) -> str:
 
-        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08,
+        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.0,
                                            use_idf=True)  # scikit function to make document vectors
 
         corpus_tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)  # scikit function to calculate tf-idf matrix
