@@ -27,6 +27,7 @@ if __name__ == '__main__':
   contents = dataparser.readData("datas/training_data/SemEval2016-Task3-CQA-QL-train-part2.xml")
   allRelQuestion = dataparser.parseData(contents)
   print(allRelQuestion.keys())
+  threadPool = []
   for eachKey in allRelQuestion:
     print("Question: ",eachKey)
     query_vector = []
@@ -40,4 +41,9 @@ if __name__ == '__main__':
     #gvsm.mainProcess()
     t = threading.Thread(target= calculateJob(query_vector, docVector))
     t.start()
+    threadPool.append(t)
+
+  for eachThread in threadPool:
+      print("wait for ", str(eachThread.getName()))
+      eachThread.join()
 
