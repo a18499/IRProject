@@ -39,7 +39,7 @@ if __name__ == '__main__':
     docVector = allComment
     #gvsm.initi(docVector, query_vector)
     #gvsm.mainProcess()
-    calculateJob(query_vector, docVector)
+    calculateJob(q, corpus)
     #t = threading.Thread(target= calculateJob(query_vector, docVector))
     #t.start()
     #threadPool.append(t)
