@@ -39,11 +39,12 @@ if __name__ == '__main__':
     docVector = allComment
     #gvsm.initi(docVector, query_vector)
     #gvsm.mainProcess()
-    t = threading.Thread(target= calculateJob(query_vector, docVector))
-    t.start()
-    threadPool.append(t)
+    calculateJob(query_vector, docVector)
+    #t = threading.Thread(target= calculateJob(query_vector, docVector))
+    #t.start()
+    #threadPool.append(t)
 
-  for eachThread in threadPool:
-      print("wait for ", str(eachThread.getName()))
-      eachThread.join()
+  #for eachThread in threadPool:
+  #    print("wait for ", str(eachThread.getName()))
+  #    eachThread.join()
 
