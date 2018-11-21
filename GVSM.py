@@ -33,7 +33,7 @@ class GVSM:
         corpus_tfidf = np.array(corpus_tfidf_mat).tolist()
 
         print(len(tfidf_vectorizer.vocabulary_))
-        if (len(tfidf_vectorizer.vocabulary_) > 26):
+        if (len(tfidf_vectorizer.vocabulary_) > 40):
             return "false"
         for key, value in sorted(tfidf_vectorizer.vocabulary_.items()):  # print the vocabulary of corpus
             print(key)
