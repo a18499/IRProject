@@ -10,6 +10,8 @@ class DataParser:
        # while fileoutput.readline() !=
 
     def parseData(self, content):
+
+        dicts = dict()
         xml = BeautifulSoup(content, features="xml")
         titles = xml.find_all('OrgQuestion')
         relquestion = ''
@@ -23,14 +25,17 @@ class DataParser:
                 print(relquestionObj['RELQ_ID'])
 
                 relquestion = relquestionObj.get_text()
-
-                relcomments = thread.find_all('RelComment')
-
-                for relcomment in relcomments:
-                    print(relcomment.get_text())
                 print("relquestion ", relquestion)
 
+                relcomments = thread.find_all('RelComment')
+                relcommentList = []
+                for relcomment in relcomments:
+                    print("RELC_ID: ", relcomment['RELC_ID'])
+                    print("relcomment: ", relcomment.get_text())
+                    relcommentList.append(relcomment.get_text())
+
+                dicts[relquestion] = relcommentList
                 #print(thread["THREAD_SEQUENCE"])
                 #print(thread.get_text())
 
-        return "Sucess"
+        return dicts

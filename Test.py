@@ -13,14 +13,24 @@ if __name__ == '__main__':
   ]
   corpus.append("Kobe is a good player")
   q = ["Report-International kobe word"]
-  own = GVSM()
+  gvsm = GVSM()
 
-  print(own.initi(corpus, q))
-  own.mainProcess()
+  #print(own.initi(corpus, q))
+  #own.mainProcess()
 
   dataparser = DataParser()
   contents = dataparser.readData("datas/training_data/SemEval2016-Task3-CQA-QL-train-part2.xml")
-  dataparser.parseData(contents)
+  allRelQuestion = dataparser.parseData(contents)
+  print(allRelQuestion.keys())
+  for eachKey in allRelQuestion:
+    print("Question: ",eachKey)
+    query_vector = []
+    query_vector.append(eachKey)
+
+    allComment = allRelQuestion[eachKey]
+    docVector = allComment
+    gvsm.initi(docVector, query_vector)
+    gvsm.mainProcess()
   '''content = dp.readData("datas/training_data/SemEval2016-Task3-CQA-QL-train-part2.xml")
   xml = BeautifulSoup(content, features="xml")
   titles = xml.find_all('OrgQuestion')
