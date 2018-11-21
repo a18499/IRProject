@@ -33,10 +33,10 @@ class GVSM:
 
         print("test: " + str(test.toarray()))
         test_qur = test.todense()
-
+        print('tot_words query ' + str(len(tfidf_vectorizer.vocabulary_)))
         test_qur_list = np.array(test_qur).tolist()
         query_vector = [0 for j in range(pow(2, tot_words))]
-
+        print('begin  corpus_tfidf_mat')
         corpus_tfidf_mat = corpus_tfidf_matrix.todense()  # matrix form of tf-idf matrix calculated above
 
         minterm = []  # list to store minterm unit vectors
