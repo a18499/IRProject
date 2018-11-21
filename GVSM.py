@@ -1,6 +1,5 @@
 # import scikit learn and numpy libraries required for this code
-import glob
-import sys
+
 import numpy as np
 import os
 from sklearn.feature_extraction.text import *
@@ -11,7 +10,7 @@ class GVSM:
     corpus = []
     queryList = []
 
-    def init(comments: list, querys: list) -> str:
+    def initi(self,comments: list, querys: list) -> str:
         global corpus
         global queryList
         queryList = querys

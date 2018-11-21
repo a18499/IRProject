@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
-from DataParser import DataParser as dp
-from GVSM import GVSM as gs
+from DataParser import DataParser
+from GVSM import GVSM
 
 
 if __name__ == '__main__':
@@ -12,10 +12,15 @@ if __name__ == '__main__':
     'Two Square-Root Approximations'
   ]
   corpus.append("Kobe is a good player")
-  q = ["Report-International test word","Report Matrix kobe"]
-  print(gs.init(corpus,q))
-  gs.mainProcess('test')
+  q = ["Report-International kobe word"]
+  own = GVSM()
 
+  print(own.initi(corpus, q))
+  own.mainProcess()
+
+  dataparser = DataParser()
+  contents = dataparser.readData("datas/training_data/SemEval2016-Task3-CQA-QL-train-part2.xml")
+  dataparser.parseData(contents)
   '''content = dp.readData("datas/training_data/SemEval2016-Task3-CQA-QL-train-part2.xml")
   xml = BeautifulSoup(content, features="xml")
   titles = xml.find_all('OrgQuestion')
