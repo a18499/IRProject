@@ -5,7 +5,7 @@ import threading
 
 def calculateJob(queryVector, docVector):
     gvsm = GVSM()
-    gvsm.initi(queryVector, docVector)
+    gvsm.initi( docVector, queryVector)
     gvsm.mainProcess()
 
 if __name__ == '__main__':
@@ -18,7 +18,7 @@ if __name__ == '__main__':
   ]
   corpus.append("Kobe is a good player")
   q = ["Report-International kobe word"]
-  gvsm = GVSM()
+  #gvsm = GVSM()
 
   #print(own.initi(corpus, q))
   #own.mainProcess()
