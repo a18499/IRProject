@@ -28,7 +28,8 @@ class GVSM:
         print("corpus_tfidf_matrix: " + str(corpus_tfidf_matrix.toarray()))
         tot_words = len(tfidf_vectorizer.vocabulary_)
         print('tot_words ' + str(tot_words))
-
+        if(tot_words > 30):
+            return "false"
         test = tfidf_vectorizer.transform(queryList)  # turn into document-term matrix (tf-idf)
 
         print("test: " + str(test.toarray()))
