@@ -22,7 +22,7 @@ class GVSM:
     def mainProcessLarge(self) -> str:
 
 
-        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08,
+        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.1,
                                            use_idf=True)  # scikit function to make document vectors
         corpus_tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)  # scikit function to calculate tf-idf matrix
 
@@ -31,8 +31,8 @@ class GVSM:
         minterm = []  # list to store minterm unit vectors
 
         corpus_tfidf = np.array(corpus_tfidf_mat).tolist()
-
-        print(len(tfidf_vectorizer.vocabulary_))
+        #print("corpus_tfidf: ",str(corpus_tfidf))
+        #print(len(tfidf_vectorizer.vocabulary_))
         if (len(tfidf_vectorizer.vocabulary_) > 40):
             return "false"
         for key, value in sorted(tfidf_vectorizer.vocabulary_.items()):  # print the vocabulary of corpus
@@ -42,13 +42,15 @@ class GVSM:
 
         # Construct the minterms of GVSM vector space
         for i in corpus_tfidf:
-
+            #print("i ",i)
             temp_l = i
             val = 0
             cn = 0
 
             for k in temp_l:
                 if k > 0:
+                    #print("cn ",cn)
+                    #print("pow(2, cn): ",pow(2, cn))
                     val = val + pow(2, cn)
                 cn = cn + 1
             minterm = minterm + [val]
