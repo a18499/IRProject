@@ -33,7 +33,7 @@ class GVSM:
         corpus_tfidf = np.array(corpus_tfidf_mat).tolist()
         #print("corpus_tfidf: ",str(corpus_tfidf))
         print(len(tfidf_vectorizer.vocabulary_))
-        if (len(tfidf_vectorizer.vocabulary_) > 40):
+        if (len(tfidf_vectorizer.vocabulary_) > 60):
             return "false"
         for key, value in sorted(tfidf_vectorizer.vocabulary_.items()):  # print the vocabulary of corpus
             print(key)
@@ -56,7 +56,7 @@ class GVSM:
                 cn = cn + 1
             #print("minterm: " + str(minterm))
             minterm = minterm + [val]
-            print("minterm: " + str(minterm))
+            #print("minterm: " + str(minterm))
         unit_vectors = []
         tot_words = len(tfidf_vectorizer.vocabulary_)
 
@@ -74,17 +74,17 @@ class GVSM:
             #tmp_unit_vector = [0 for j in range(pow(2, tot_words))]
             #tmp_unit_vector = np.zeros(tot_words)
             cnt = 0
-            print("corpus_tfidf " + str(corpus_tfidf))
-            print("tmp_unit_vector " + str(tmp_unit_vector))
+            #print("corpus_tfidf " + str(corpus_tfidf))
+            #print("tmp_unit_vector " + str(tmp_unit_vector))
             for k in corpus_tfidf:
                 cn = 0
                 #print("K: "+ str(k))
                 for l in k:
-                    print("L: " + str(l))
+                    #print("L: " + str(l))
                     print("CNT: " + str(cnt))
                     if i == cn and l > 0:
 
-                        print("minterm[cnt]: " + str(minterm[cnt]))
+                        #print("minterm[cnt]: " + str(minterm[cnt]))
                         tmp_unit_vector[minterm[cnt]] = tmp_unit_vector[minterm[cnt]] + l
                     cn = cn + 1
                 cnt = cnt + 1
