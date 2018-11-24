@@ -22,8 +22,8 @@ class GVSM:
     def mainProcessLarge(self) -> str:
 
 
-        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.1,
-                                           use_idf=True)  # scikit function to make document vectors
+        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08,
+                                           use_idf=True)  # sklearn  function to make document vectors
         corpus_tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)  # scikit function to calculate tf-idf matrix
 
         corpus_tfidf_mat = corpus_tfidf_matrix.todense()  # matrix form of tf-idf matrix calculated above
@@ -32,7 +32,7 @@ class GVSM:
 
         corpus_tfidf = np.array(corpus_tfidf_mat).tolist()
         #print("corpus_tfidf: ",str(corpus_tfidf))
-        #print(len(tfidf_vectorizer.vocabulary_))
+        print(len(tfidf_vectorizer.vocabulary_))
         if (len(tfidf_vectorizer.vocabulary_) > 40):
             return "false"
         for key, value in sorted(tfidf_vectorizer.vocabulary_.items()):  # print the vocabulary of corpus
@@ -40,7 +40,7 @@ class GVSM:
 
         print('--------------------------------------------------------------------------------------------')
 
-        # Construct the minterms of GVSM vector space
+        #Construct the minterms of GVSM vector space
         for i in corpus_tfidf:
             #print("i ",i)
             temp_l = i
@@ -52,9 +52,11 @@ class GVSM:
                     #print("cn ",cn)
                     #print("pow(2, cn): ",pow(2, cn))
                     val = val + pow(2, cn)
+                    #val = 1
                 cn = cn + 1
+            #print("minterm: " + str(minterm))
             minterm = minterm + [val]
-
+            print("minterm: " + str(minterm))
         unit_vectors = []
         tot_words = len(tfidf_vectorizer.vocabulary_)
 
@@ -63,12 +65,25 @@ class GVSM:
         print("Calculate the index term vectors as linear combinations of minterm vectors")
         # Calculate the index term vectors as linear combinations of minterm vectors
         for i in range(0, tot_words):
-            tmp_unit_vector = [0 for j in range(pow(2, tot_words))]
+           # tmp_unit_vector = np.zeros(pow(2, tot_words),np.dtype='float16')
+            #tmp_unit_vector = np.zeros(pow(2, tot_words), dtype='float16')
+            tmp_unit_vector = [0] * pow(2, tot_words)
+            print("filling array... ")
+            print("tot_word  " + str(tot_words))
+            #tmp_unit_vector = [0 for j in range(pow(2, tot_words))]
+            #tmp_unit_vector = np.zeros(tot_words)
             cnt = 0
+            print("corpus_tfidf " + str(corpus_tfidf))
+            print("tmp_unit_vector " + str(tmp_unit_vector))
             for k in corpus_tfidf:
                 cn = 0
+                #print("K: "+ str(k))
                 for l in k:
+                    print("L: " + str(l))
+                    print("CNT: " + str(cnt))
                     if i == cn and l > 0:
+
+                        print("minterm[cnt]: " + str(minterm[cnt]))
                         tmp_unit_vector[minterm[cnt]] = tmp_unit_vector[minterm[cnt]] + l
                     cn = cn + 1
                 cnt = cnt + 1
@@ -131,6 +146,7 @@ class GVSM:
         print('tot_words query ' + str(len(tfidf_vectorizer.vocabulary_)))
         test_qur_list = np.array(test_qur).tolist()
         query_vector = [0 for j in range(pow(2, tot_words))]
+        print("Query Vector "+query_vector)
         print('begin  corpus_tfidf_mat')
         corpus_tfidf_mat = corpus_tfidf_matrix.todense()  # matrix form of tf-idf matrix calculated above
 
