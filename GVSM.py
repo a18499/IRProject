@@ -67,9 +67,10 @@ class GVSM:
         for i in range(0, tot_words):
            # tmp_unit_vector = np.zeros(pow(2, tot_words),np.dtype='float16')
             #tmp_unit_vector = np.zeros(pow(2, tot_words), dtype='float16')
-            tmp_unit_vector = [0] * pow(2, tot_words)
+            #tmp_unit_vector = [0] * pow(2, tot_words)
             print("filling array... ")
             print("tot_word  " + str(tot_words))
+            tmp_unit_vector = np.zeros(pow(2, tot_words), np.float)
             #tmp_unit_vector = [0 for j in range(pow(2, tot_words))]
             #tmp_unit_vector = np.zeros(tot_words)
             cnt = 0
