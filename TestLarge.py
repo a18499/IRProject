@@ -52,7 +52,8 @@ if __name__ == '__main__':
 
     #Calculate the index term vectors as linear combinations of minterm vectors
     for i in range(0,tot_words):
-        tmp_unit_vector = [0 for j in range(pow(2,tot_words))]
+        #tmp_unit_vector = [0 for j in range(pow(2,tot_words))]
+        tmp_unit_vector = np.zeros(pow(2,tot_words), np.float16)
         cnt=0
         for k in corpus_tfidf:
             cn=0
