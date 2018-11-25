@@ -26,14 +26,16 @@ class GVSM:
                                            use_idf=True)  # sklearn  function to make document vectors
         corpus_tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)  # scikit function to calculate tf-idf matrix
 
+        print("corpus_tfidf_matrix: " + str(corpus_tfidf_matrix.toarray()))
+
         corpus_tfidf_mat = corpus_tfidf_matrix.todense()  # matrix form of tf-idf matrix calculated above
 
         minterm = []  # list to store minterm unit vectors
 
         corpus_tfidf = np.array(corpus_tfidf_mat).tolist()
         #print("corpus_tfidf: ",str(corpus_tfidf))
-        print(len(tfidf_vectorizer.vocabulary_))
-        if (len(tfidf_vectorizer.vocabulary_) > 60):
+        print("Total word: " + str(len(tfidf_vectorizer.vocabulary_)))
+        if (len(tfidf_vectorizer.vocabulary_) > 30):
             return "false"
         for key, value in sorted(tfidf_vectorizer.vocabulary_.items()):  # print the vocabulary of corpus
             print(key)
@@ -61,33 +63,41 @@ class GVSM:
         tot_words = len(tfidf_vectorizer.vocabulary_)
 
         p = []
-        #size_of_minterms = pow(2, (tot_words))  # size of GVSM vector space is 2^total_words
+        #size_of_minterms = pow(2, (tot_words))  #size of GVSM vector space is 2^total_words
         print("Calculate the index term vectors as linear combinations of minterm vectors")
         # Calculate the index term vectors as linear combinations of minterm vectors
         for i in range(0, tot_words):
            # tmp_unit_vector = np.zeros(pow(2, tot_words),np.dtype='float16')
             #tmp_unit_vector = np.zeros(pow(2, tot_words), dtype='float16')
             #tmp_unit_vector = [0] * pow(2, tot_words)
+
             print("filling array... ")
             print("tot_word  " + str(tot_words))
-            tmp_unit_vector = np.zeros(pow(2, tot_words), np.float16)
+            #tmp_unit_vector = np.zeros(tot_words)
+
+            tmp_unit_vector = [0] * pow(2, tot_words)
+
             #tmp_unit_vector = [0 for j in range(pow(2, tot_words))]
             #tmp_unit_vector = np.zeros(tot_words)
-            cnt = 0
-            #print("corpus_tfidf " + str(corpus_tfidf))
+            document_count = 0
+
+            print("corpus_tfidf " + str(corpus_tfidf))
+            print("corpus_tfidf len  " + str(len(corpus_tfidf)))
             #print("tmp_unit_vector " + str(tmp_unit_vector))
-            for k in corpus_tfidf:
+            for eachDoc in corpus_tfidf:
                 cn = 0
-                #print("K: "+ str(k))
-                for l in k:
-                    #print("L: " + str(l))
-                    print("CNT: " + str(cnt))
-                    if i == cn and l > 0:
+                print("eachDocument: " + str(eachDoc))
+                print("eachDocument: " + str(len(eachDoc)))
+                for keyword in eachDoc:
+                    print("keyword: " + str(keyword))
+
+                    print("document_count: " + str(document_count))
+                    if i == cn and keyword > 0:
 
                         #print("minterm[cnt]: " + str(minterm[cnt]))
-                        tmp_unit_vector[minterm[cnt]] = tmp_unit_vector[minterm[cnt]] + l
+                        tmp_unit_vector[minterm[document_count]] = tmp_unit_vector[minterm[document_count]] + keyword
                     cn = cn + 1
-                cnt = cnt + 1
+                document_count = document_count + 1
 
             magnitude = np.linalg.norm(tmp_unit_vector)
             myArr = np.array(tmp_unit_vector)
