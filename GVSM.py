@@ -104,14 +104,17 @@ class GVSM:
             newArr = myArr / magnitude
             p.append(newArr)
 
-        queryVector = np.zeros(pow(2, tot_words))
+        #queryVector = np.zeros(pow(2, tot_words))[0] * pow(2, tot_words)
+        queryVector =[0] * pow(2, tot_words)
         sim = []
         count_file = 0
         print("this loop constructs document and query vectors in the GVSM vector space as linear combination")
         # this loop constructs document and query vectors in the GVSM vector space as linear combination of minterm vectors and cosine similarity
         for doc in corpus_tfidf:
 
-            docVector = np.zeros(pow(2, tot_words))
+            #docVector = np.zeros(pow(2, tot_words))
+            docVector = [0] * pow(2, tot_words)
+
             count = 0  # keeps count of index terms
 
             for value in doc:
