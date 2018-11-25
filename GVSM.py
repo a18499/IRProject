@@ -22,7 +22,7 @@ class GVSM:
     def mainProcessLarge(self) -> str:
 
 
-        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08,
+        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.1,
                                            use_idf=True)  # sklearn  function to make document vectors
         corpus_tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)  # scikit function to calculate tf-idf matrix
 
@@ -35,7 +35,7 @@ class GVSM:
         corpus_tfidf = np.array(corpus_tfidf_mat).tolist()
         #print("corpus_tfidf: ",str(corpus_tfidf))
         print("Total word: " + str(len(tfidf_vectorizer.vocabulary_)))
-        if (len(tfidf_vectorizer.vocabulary_) > 30):
+        if (len(tfidf_vectorizer.vocabulary_) > 60):
             return "false"
         for key, value in sorted(tfidf_vectorizer.vocabulary_.items()):  # print the vocabulary of corpus
             print(key)
