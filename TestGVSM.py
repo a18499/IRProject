@@ -125,8 +125,10 @@ if __name__ == '__main__':
             count = count + 1
         print("query_vector " + str(query_vector))
         print("docVector " + str(docVector))
-        print("cosine_similarity " + str(cosine_similarity(query_vector, docVector)))
-        sim.append((cosine_similarity(query_vector, docVector)[0][0],
+        cosine_similarity_matrix = np.vstack((query_vector, docVector))
+
+        print("cosine_similarity " + str(cosine_similarity(cosine_similarity_matrix)))
+        sim.append((cosine_similarity(cosine_similarity_matrix)[0][1],
                     os.path.basename(corpus[count_file])))  # cosine similarity
         count_file += 1
 

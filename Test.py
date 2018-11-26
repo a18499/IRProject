@@ -7,7 +7,9 @@ def calculateJob(queryVector, docVector):
     gvsm = GVSM()
     gvsm.initi(docVector, queryVector)
     #gvsm.mainProcessLarge()
-    gvsm.myGVSM()
+    #gvsm.mainProcess()
+    #gvsm.myGVSM()
+    gvsm.testPM25()
 if __name__ == '__main__':
   print("test")
   corpus = [
@@ -23,9 +25,11 @@ if __name__ == '__main__':
 
   #print(own.initi(corpus, q))
   #own.mainProcess()
+  #calculateJob(corpus, q)
+
 
   dataparser = DataParser()
-  contents = dataparser.readData("datas/training_data/SemEval2016-Task3-CQA-QL-train-part2.xml")
+  contents = dataparser.readData("datas/test_data/SemEval2017-task3-English-test-input.xml")
   allRelQuestion = dataparser.parseData(contents)
   print(allRelQuestion.keys())
   threadPool = []
@@ -41,7 +45,7 @@ if __name__ == '__main__':
     #gvsm.initi(docVector, query_vector)
     #gvsm.mainProcess()
     large = query_vector + docVector
-    calculateJob(query_vector, large)
+    calculateJob(query_vector, docVector)
     #t = threading.Thread(target= calculateJob(query_vector, docVector))
     #t.start()
     #threadPool.append(t)

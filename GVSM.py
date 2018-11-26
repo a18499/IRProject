@@ -4,6 +4,9 @@ import numpy as np
 import os
 from sklearn.feature_extraction.text import *
 from sklearn.metrics.pairwise import cosine_similarity
+from gensim import corpora
+from gensim.summarization import bm25
+from nltk.stem.porter import PorterStemmer
 import scipy.sparse as ss
 
 class GVSM:
@@ -18,6 +21,61 @@ class GVSM:
 
         print("Test")
         return "complete"
+    def testPM25(self):
+        p_stemmer = PorterStemmer()
+
+        # 以下資料取自: https://www.businessinsider.com.au/bitcoin-futures-markets-unusual-behaviour-2018-2
+        article_row = [
+            'For the majority of bitcoin futures trading since their launch in December, the futures curves have been in steep contango, meaning that near-dated prices are below longer-dated prices,」 the analysts said',
+            'But according to Goldman, the recent price action in Bitcoin futures implied higher prices for longer-dated contracts — far in excess of the cost to borrow money.',
+            'Cboe futures contracts are also just based on one exchange — Gemini, run by the Winklevoss twins — whereas CME futures are based on a Bitcoin reference rate derived from an aggregate of major exchanges',
+        ]
+
+        article_list = []
+        print("corpus " + str(corpus))
+        #bagWord = CountVectorizer()
+        #bagWord.fit_transform(corpus)
+        #print("features " + str(bagWord.get_feature_names()))
+        #tot_word = bagWord.get_feature_names()
+        bagQuery = CountVectorizer()
+        bagQuery.fit_transform(queryList)
+        tot_query = bagQuery.get_feature_names()
+        """for eachComment in corpus:
+            bagWord = CountVectorizer()
+            print("eachComment " + str(np.array(eachComment)))
+            bagWord.fit_transform(np.array(eachComment))
+            print("features " + str(bagWord.get_feature_names()))
+            tot_word = bagWord.get_feature_names()
+            article_list.append(tot_word)
+        """
+        for a in corpus:
+            a_split = a.replace('?', ' ').replace('(', ' ').replace(')', ' ').split(' ')
+            # 詞干提取
+            stemmed_tokens = [p_stemmer.stem(i) for i in a_split]
+            article_list.append(stemmed_tokens)
+
+        print("article_list: " + str(article_list))
+        #stemmed_tokens = [p_stemmer.stem(i) for i in tot_word]
+        #article_list.append(stemmed_tokens)
+
+        query = ['bitcoin', 'prices', 'futur', 'winklevoss']
+        print("queryList " + str(queryList))
+        query_stemmed = [p_stemmer.stem(i) for i in tot_query]
+        print('query_stemmed :', query_stemmed)
+
+        # bm25模型
+        bm25Model = bm25.BM25(article_list)
+        # tf-idf
+        average_idf = sum(map(lambda k: float(bm25Model.idf[k]), bm25Model.idf.keys())) / len(bm25Model.idf.keys())
+        scores = bm25Model.get_scores(query_stemmed, average_idf)
+        print('scores :', scores)
+
+        count = 0
+        result = dict()
+        for eachScore in scores:
+            result[corpus[count]] = eachScore
+            count = count + 1
+        print("result " + str(result))
     def myGVSM(self):
         vector = CountVectorizer()
         Document_Freuency = vector.fit_transform(corpus)
@@ -47,9 +105,32 @@ class GVSM:
 
         print("minterm array " + str(np.array(mintermArray)))
         print("minterm array size " + str(len(np.array(mintermArray))))
-        #create document Index array
+        document_num_to_minterm_num = dict()
+
+        documentCount = 0
+        #create document Index array calculate index
         for eachMintermValue in np.array(mintermArray):
             print("Each Minterm vaue " + str(eachMintermValue))
+            square_num = 0
+            value = 0
+            for eachValue in eachMintermValue:
+                #print("eachValue " + str(eachValue))
+                if(eachValue > 0):
+                    print("Square num " + str(square_num))
+                    value = value + pow(2,square_num)
+                square_num = square_num + 1
+            document_num_to_minterm_num[documentCount] = value
+            documentCount = documentCount + 1
+
+        print(str(document_num_to_minterm_num))
+
+        doccount = 0
+        #calcuate conbination
+        for eachDoc in Document_Freuency:
+            #Check minterm whether is same or not
+
+            doccount = doccount + 1
+
     def mainProcessLarge(self) -> str:
 
 
@@ -169,7 +250,7 @@ class GVSM:
 
             for value in doc:
                 docVector += (
-                            value * p[count])  # product of tfidf value from matrix and nomrmalised term vectors from p
+                            value * keywordVector[count])  # product of tfidf value from matrix and nomrmalised term vectors from p
                 count = count + 1
 
             if (count_file == 0):
@@ -201,8 +282,7 @@ class GVSM:
         print("corpus_tfidf_matrix: " + str(corpus_tfidf_matrix.toarray()))
         tot_words = len(tfidf_vectorizer.vocabulary_)
         print('tot_words ' + str(tot_words))
-        if(tot_words > 26):
-            return "false"
+
         test = tfidf_vectorizer.transform(queryList)  # turn into document-term matrix (tf-idf)
 
         print("test: " + str(test.toarray()))
@@ -210,7 +290,7 @@ class GVSM:
         print('tot_words query ' + str(len(tfidf_vectorizer.vocabulary_)))
         test_qur_list = np.array(test_qur).tolist()
         query_vector = [0 for j in range(pow(2, tot_words))]
-        print("Query Vector "+query_vector)
+        print("Query Vector "+ str(query_vector))
         print('begin  corpus_tfidf_mat')
         corpus_tfidf_mat = corpus_tfidf_matrix.todense()  # matrix form of tf-idf matrix calculated above
 
