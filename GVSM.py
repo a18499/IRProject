@@ -4,7 +4,7 @@ import numpy as np
 import os
 from sklearn.feature_extraction.text import *
 from sklearn.metrics.pairwise import cosine_similarity
-
+import scipy.sparse as ss
 
 class GVSM:
     corpus = []
@@ -45,12 +45,12 @@ class GVSM:
         #Construct the minterms of GVSM vector space
         for i in corpus_tfidf:
             #print("i ",i)
-            temp_l = i
+            eachDoc = i
             val = 0
             cn = 0
 
-            for k in temp_l:
-                if k > 0:
+            for keyword in eachDoc:
+                if keyword > 0:
                     #print("cn ",cn)
                     #print("pow(2, cn): ",pow(2, cn))
                     val = val + pow(2, cn)
@@ -62,10 +62,12 @@ class GVSM:
         unit_vectors = []
         tot_words = len(tfidf_vectorizer.vocabulary_)
 
-        p = []
+        keywordVector = []
         #size_of_minterms = pow(2, (tot_words))  #size of GVSM vector space is 2^total_words
         print("Calculate the index term vectors as linear combinations of minterm vectors")
         # Calculate the index term vectors as linear combinations of minterm vectors
+
+
         for i in range(0, tot_words):
            # tmp_unit_vector = np.zeros(pow(2, tot_words),np.dtype='float16')
             #tmp_unit_vector = np.zeros(pow(2, tot_words), dtype='float16')
@@ -73,9 +75,11 @@ class GVSM:
 
             print("filling array... ")
             print("tot_word  " + str(tot_words))
-            #tmp_unit_vector = np.zeros(tot_words)
+            tmp_unit_vector = np.zeros(tot_words, dtype='uint8')
 
-            tmp_unit_vector = [0] * pow(2, tot_words)
+            #tmp_unit_vector = ss.lil_matrix((pow(2, tot_words), 0))
+            #print("tmp_unit_vector " + str(tmp_unit_vector))
+            #tmp_unit_vector = [0] * pow(2, tot_words)
 
             #tmp_unit_vector = [0 for j in range(pow(2, tot_words))]
             #tmp_unit_vector = np.zeros(tot_words)
@@ -85,35 +89,37 @@ class GVSM:
             print("corpus_tfidf len  " + str(len(corpus_tfidf)))
             #print("tmp_unit_vector " + str(tmp_unit_vector))
             for eachDoc in corpus_tfidf:
-                cn = 0
+                eachKeyWordInDoc = 0
                 print("eachDocument: " + str(eachDoc))
                 print("eachDocument: " + str(len(eachDoc)))
                 for keyword in eachDoc:
                     print("keyword: " + str(keyword))
 
                     print("document_count: " + str(document_count))
-                    if i == cn and keyword > 0:
+                    if i == eachKeyWordInDoc and keyword > 0:
 
-                        #print("minterm[cnt]: " + str(minterm[cnt]))
-                        tmp_unit_vector[minterm[document_count]] = tmp_unit_vector[minterm[document_count]] + keyword
-                    cn = cn + 1
+                        print("minterm[document_count]: " + str(minterm[document_count]))
+                        #tmp_unit_vector
+                        tmp_unit_vector= tmp_unit_vector[minterm[document_count]] + keyword
+                    eachKeyWordInDoc = eachKeyWordInDoc + 1
                 document_count = document_count + 1
 
             magnitude = np.linalg.norm(tmp_unit_vector)
             myArr = np.array(tmp_unit_vector)
             newArr = myArr / magnitude
-            p.append(newArr)
+            keywordVector.append(newArr)
+            print("p length: " + str(len(keywordVector)))
 
-        #queryVector = np.zeros(pow(2, tot_words))[0] * pow(2, tot_words)
-        queryVector =[0] * pow(2, tot_words)
+        queryVector = np.zeros(pow(2, tot_words))
+        #queryVector =[0] * pow(2, tot_words)
         sim = []
         count_file = 0
         print("this loop constructs document and query vectors in the GVSM vector space as linear combination")
         # this loop constructs document and query vectors in the GVSM vector space as linear combination of minterm vectors and cosine similarity
         for doc in corpus_tfidf:
 
-            #docVector = np.zeros(pow(2, tot_words))
-            docVector = [0] * pow(2, tot_words)
+            docVector = np.zeros(pow(2, tot_words))
+            #docVector = [0] * pow(2, tot_words)
 
             count = 0  # keeps count of index terms
 
