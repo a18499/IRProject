@@ -18,11 +18,42 @@ class GVSM:
 
         print("Test")
         return "complete"
+    def myGVSM(self):
+        vector = CountVectorizer()
+        Document_Freuency = vector.fit_transform(corpus)
+        feature_Name = vector.get_feature_names()
+        tot_word = len(vector.get_feature_names())
+        print("feature_Name: " + str(feature_Name))
+        print("tot_word: " + str(tot_word))
+        print("Document_Freuency: " + str(Document_Freuency.toarray()))
 
+        mintermArray = []
+        #Create minterm matrix
+        print("Create minterm matrix... ")
+        for i in Document_Freuency.toarray():
+            #print("Each Doc " + str(np.array(i)))
+            eachDocMinterm = np.zeros(tot_word)
+            count = 0
+            eachDoc = i
+            for eachKeyWord in eachDoc:
+                #print("eachKeyWord " + str(eachKeyWord))
+                if(eachKeyWord > 0):
+                    eachDocMinterm[count] = 1
+                else:
+                    eachDocMinterm[count] = 0
+                count = count + 1
+            #print("eachDocMinterm " + str(eachDocMinterm))
+            mintermArray.append(eachDocMinterm)
+
+        print("minterm array " + str(np.array(mintermArray)))
+        print("minterm array size " + str(len(np.array(mintermArray))))
+        #create document Index array
+        for eachMintermValue in np.array(mintermArray):
+            print("Each Minterm vaue " + str(eachMintermValue))
     def mainProcessLarge(self) -> str:
 
 
-        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.1,
+        tfidf_vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08,
                                            use_idf=True)  # sklearn  function to make document vectors
         corpus_tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)  # scikit function to calculate tf-idf matrix
 
@@ -41,6 +72,8 @@ class GVSM:
             print(key)
 
         print('--------------------------------------------------------------------------------------------')
+        minterm_np = []
+       # minterm_array = np.zeros(minterm_np)
 
         #Construct the minterms of GVSM vector space
         for i in corpus_tfidf:
@@ -49,23 +82,34 @@ class GVSM:
             val = 0
             cn = 0
 
+            document_keyword_array = np.zeros(len(eachDoc))
             for keyword in eachDoc:
+
                 if keyword > 0:
-                    #print("cn ",cn)
+
                     #print("pow(2, cn): ",pow(2, cn))
+                    document_keyword_array[cn] = 1
                     val = val + pow(2, cn)
                     #val = 1
+                else:
+                    document_keyword_array[cn] = 0
                 cn = cn + 1
-            #print("minterm: " + str(minterm))
-            minterm = minterm + [val]
-            #print("minterm: " + str(minterm))
-        unit_vectors = []
-        tot_words = len(tfidf_vectorizer.vocabulary_)
 
+            #print("minterm: " + str(minterm))
+            print("document_keyword_array " + str(document_keyword_array))
+            minterm_np.append(document_keyword_array)
+            minterm = minterm + [val]
+            print("minterm: " + str(minterm))
+        unit_vectors = []
+
+        print("minterm_np : " + str(np.array(minterm_np)))
+        print("minterm_np length : " + str(len(np.array(minterm_np))))
         keywordVector = []
         #size_of_minterms = pow(2, (tot_words))  #size of GVSM vector space is 2^total_words
         print("Calculate the index term vectors as linear combinations of minterm vectors")
         # Calculate the index term vectors as linear combinations of minterm vectors
+        tot_words = len(tfidf_vectorizer.vocabulary_)
+
 
 
         for i in range(0, tot_words):
@@ -75,7 +119,7 @@ class GVSM:
 
             print("filling array... ")
             print("tot_word  " + str(tot_words))
-            tmp_unit_vector = np.zeros(tot_words, dtype='uint8')
+            tmp_unit_vector = np.zeros(pow(2, tot_words), dtype='uint8')
 
             #tmp_unit_vector = ss.lil_matrix((pow(2, tot_words), 0))
             #print("tmp_unit_vector " + str(tmp_unit_vector))
@@ -91,14 +135,14 @@ class GVSM:
             for eachDoc in corpus_tfidf:
                 eachKeyWordInDoc = 0
                 print("eachDocument: " + str(eachDoc))
-                print("eachDocument: " + str(len(eachDoc)))
+                print("eachDocument length: " + str(len(eachDoc)))
                 for keyword in eachDoc:
-                    print("keyword: " + str(keyword))
+                    #print("keyword: " + str(keyword))
 
-                    print("document_count: " + str(document_count))
+                    #print("document_count: " + str(document_count))
                     if i == eachKeyWordInDoc and keyword > 0:
 
-                        print("minterm[document_count]: " + str(minterm[document_count]))
+                        #print("minterm[document_count]: " + str(minterm[document_count]))
                         #tmp_unit_vector
                         tmp_unit_vector= tmp_unit_vector[minterm[document_count]] + keyword
                     eachKeyWordInDoc = eachKeyWordInDoc + 1
@@ -108,7 +152,7 @@ class GVSM:
             myArr = np.array(tmp_unit_vector)
             newArr = myArr / magnitude
             keywordVector.append(newArr)
-            print("p length: " + str(len(keywordVector)))
+            print("keywordVector length: " + str(len(keywordVector)))
 
         queryVector = np.zeros(pow(2, tot_words))
         #queryVector =[0] * pow(2, tot_words)

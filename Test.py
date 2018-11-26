@@ -6,8 +6,8 @@ import threading
 def calculateJob(queryVector, docVector):
     gvsm = GVSM()
     gvsm.initi(docVector, queryVector)
-    gvsm.mainProcessLarge()
-
+    #gvsm.mainProcessLarge()
+    gvsm.myGVSM()
 if __name__ == '__main__':
   print("test")
   corpus = [
