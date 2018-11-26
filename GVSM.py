@@ -19,7 +19,7 @@ class GVSM:
         queryList = querys
         corpus = comments
 
-        print("Test")
+
         return "complete"
     def testPM25(self):
         p_stemmer = PorterStemmer()
@@ -32,7 +32,7 @@ class GVSM:
         ]
 
         article_list = []
-        print("corpus " + str(corpus))
+        #print("corpus " + str(corpus))
         #bagWord = CountVectorizer()
         #bagWord.fit_transform(corpus)
         #print("features " + str(bagWord.get_feature_names()))
@@ -49,33 +49,39 @@ class GVSM:
             article_list.append(tot_word)
         """
         for a in corpus:
-            a_split = a.replace('?', ' ').replace('(', ' ').replace(')', ' ').split(' ')
-            # 詞干提取
-            stemmed_tokens = [p_stemmer.stem(i) for i in a_split]
-            article_list.append(stemmed_tokens)
 
-        print("article_list: " + str(article_list))
+            a_split = a.replace('?', ' ').replace('(', ' ').replace(')', ' ').split(' ')
+            a = a.replace('\n', '')
+            print("a " + str([a]))
+            # 詞干提取
+            vectorizer = CountVectorizer(analyzer='word',token_pattern=u"(?u)\\b\\w*\\S*\\b")
+            X = vectorizer.fit_transform([a])
+            stemmed_tokens = [p_stemmer.stem(i) for i in a_split]
+            article_list.append(vectorizer.get_feature_names())
+
+        #print("article_list: " + str(article_list))
         #stemmed_tokens = [p_stemmer.stem(i) for i in tot_word]
         #article_list.append(stemmed_tokens)
 
         query = ['bitcoin', 'prices', 'futur', 'winklevoss']
-        print("queryList " + str(queryList))
+        #print("queryList " + str(queryList))
         query_stemmed = [p_stemmer.stem(i) for i in tot_query]
-        print('query_stemmed :', query_stemmed)
+        #print('query_stemmed :', query_stemmed)
 
         # bm25模型
         bm25Model = bm25.BM25(article_list)
         # tf-idf
         average_idf = sum(map(lambda k: float(bm25Model.idf[k]), bm25Model.idf.keys())) / len(bm25Model.idf.keys())
         scores = bm25Model.get_scores(query_stemmed, average_idf)
-        print('scores :', scores)
+        #print('scores :', scores)
 
         count = 0
         result = dict()
         for eachScore in scores:
             result[corpus[count]] = eachScore
             count = count + 1
-        print("result " + str(result))
+        #print("result " + str(result))
+        return result
     def myGVSM(self):
         vector = CountVectorizer()
         Document_Freuency = vector.fit_transform(corpus)
