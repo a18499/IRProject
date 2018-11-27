@@ -34,6 +34,7 @@ if __name__ == '__main__':
   dataparser = DataParser()
   contents = dataparser.readData("datas/test_data/SemEval2017-task3-English-test-input.xml")
 
+  dataparser.parseSubtaskBData(contents)
   relcommtents , relquests = dataparser.parseSubtaskAData(contents)
 
   for each_rel_request in relquests:

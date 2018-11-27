@@ -12,14 +12,16 @@ class DataParser:
     def parseSubtaskBData(self, content):
         xml = BeautifulSoup(content, features="xml")
         titles = xml.find_all('OrgQuestion')
+        #Quti
         for title in titles:
             print("ORGQ_ID: " + title["ORGQ_ID"])
-            print(title.OrgQSubject.get_text())
+            print("ORGQ_ID Content: " + title.OrgQSubject.get_text())
             threads = title.find_all('Thread')
             for thread in threads:
                 relquestionObj = thread.find('RelQuestion')
-                print("RELQ_ID " + relquestionObj['RELQ_ID'])
-                print("RELQ_Content " + relquestionObj['RELQ_ID'])
+                print("RELQ_ID: " + relquestionObj['RELQ_ID'])
+                print("RELQ_Content: " + relquestionObj.RelQSubject.get_text())
+
 
     def parseSubtaskAData(self, content):
         subtaskAdata = dict()
