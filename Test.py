@@ -62,10 +62,10 @@ if __name__ == '__main__':
         #print("result " + str(results))
         count = 0
         f = open("subtaskA.pred", "a")
-
+        print("Result Size "+str(len(results)))
         for eachResult in results:
-          print(str(eachrelQuest) +" "+ str(relcommentIDs[count]) + " 0 " + str(results[eachResult]) + " false")
-          f.write(str(eachrelQuest) +" "+ str(relcommentIDs[count]) + " 0 "  + str(results[eachResult]) + " false")
+          print(str(eachrelQuest) +" "+ str(relcommentIDs[count]) + " 0 " + str(eachResult) + " false")
+          f.write(str(eachrelQuest) +" "+ str(relcommentIDs[count]) + " 0 " + str(eachResult) + " false")
           f.write("\n")
           #print("Comment ID " + str(relcommentIDs[count]))
           #print("Score " + str(results[eachResult]))

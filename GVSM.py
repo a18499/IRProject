@@ -89,11 +89,12 @@ class GVSM:
 
         count = 0
         result = dict()
+
         for eachScore in scores:
             result[corpus[count]] = eachScore
             count = count + 1
         print("result " + str(result))
-        return result
+        return scores
     def myGVSM(self):
         vector = CountVectorizer()
         Document_Freuency = vector.fit_transform(corpus)
