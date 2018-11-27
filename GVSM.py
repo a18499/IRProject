@@ -24,7 +24,7 @@ class GVSM:
     def testPM25(self):
         p_stemmer = PorterStemmer()
 
-        # 以下資料取自: https://www.businessinsider.com.au/bitcoin-futures-markets-unusual-behaviour-2018-2
+
         article_row = [
             'For the majority of bitcoin futures trading since their launch in December, the futures curves have been in steep contango, meaning that near-dated prices are below longer-dated prices,」 the analysts said',
             'But according to Goldman, the recent price action in Bitcoin futures implied higher prices for longer-dated contracts — far in excess of the cost to borrow money.',
@@ -52,7 +52,7 @@ class GVSM:
 
             a_split = a.replace('?', ' ').replace('(', ' ').replace(')', ' ').split(' ')
             a = a.replace('\n', '')
-            print("a " + str([a]))
+            #print("a " + str([a]))
             if(a == "=("):
                 article_list.append([a])
             elif(a == "."):
@@ -68,7 +68,7 @@ class GVSM:
                 X = vectorizer.fit_transform([a])
                 stemmed_tokens = [p_stemmer.stem(i) for i in a_split]
 
-                print(" vectorizer.get_feature_names() " + str(vectorizer.get_feature_names()))
+                #print(" vectorizer.get_feature_names() " + str(vectorizer.get_feature_names()))
                 article_list.append(vectorizer.get_feature_names())
 
         #print("article_list: " + str(article_list))

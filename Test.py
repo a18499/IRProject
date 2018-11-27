@@ -1,100 +1,114 @@
-from bs4 import BeautifulSoup
+
 from DataParser import DataParser
-from GVSM import GVSM
-import threading
-import numpy as np
+
+
+from BM25 import BM25
+
+
 def calculateJob(queryVector, docVector):
-    gvsm = GVSM()
-    gvsm.initi(docVector, queryVector)
-    #gvsm.mainProcessLarge()
-    #gvsm.mainProcess()
-    #gvsm.myGVSM()
-    result = gvsm.testPM25()
-    #print("Result " + str(result))
+    bm25 = BM25()
+    bm25.init_param(docVector, queryVector)
+    result = bm25.mainprocess()
     return result
 
-if __name__ == '__main__':
-  print("test")
-  corpus = [
-    'Report-International kobe word',
-    'Preliminary Report-International Algebraic Language',
-    'Extraction of Roots by Repeated Subtractions for Digital Computers',
-    'Techniques Department on Matrix Program Schemes',
-    'Two Square-Root Approximations'
-  ]
-  corpus.append("Kobe is a good player")
-  q = ["Report-International kobe word"]
-  gvsm = GVSM()
 
-  #print(own.initi(corpus, q))
-  #own.mainProcess()
-  #calculateJob(corpus, q)
+def subteskC(org_questions, all_comments):
+    # loop get each question
+    for eachorgquestion in org_questions.keys():
+        each_orgquestion_id = eachorgquestion
+        each_orgquestion_content = org_questions[eachorgquestion]
+        rel_comment_list = []
+        rel_comment_ID_list = []
+        for eachRelComment in all_comments.keys():
+            if each_orgquestion_id in eachRelComment:
+                rel_comment_list.append(all_comments[eachRelComment])
+                rel_comment_ID_list.append(eachRelComment)
 
-
-  dataparser = DataParser()
-  contents = dataparser.readData("datas/test_data/SemEval2017-task3-English-test-input.xml")
-
-  dataparser.parseSubtaskBData(contents)
-  relcommtents , relquests = dataparser.parseSubtaskAData(contents)
-
-  for each_rel_request in relquests:
-    #print("each_rel_request: " + str(each_rel_request.keys()))
-    relQuestion = ""
-    relQuestion_Content = ""
-    for requestContent in each_rel_request:
-      relQuestion = requestContent
-      relQuestion_Content = each_rel_request[requestContent]
-    for eachrelQuest in relcommtents.keys():
-      if(eachrelQuest == relQuestion):
-        #print("eachrelQuest: " + str(eachrelQuest))
-        relcommtents_contents = relcommtents[eachrelQuest]
-        #print("relcommtents_content " + str(relcommtents_contents))
-        relcommentIDs = []
-        relcommtentContents = []
-        for eachrelcommentID in relcommtents_contents:
-          #print("eachrelcommentID " + str(eachrelcommentID))
-          relcommentIDs.append(eachrelcommentID)
-          #print("eachrelcomment_Content " + str(relcommtents_contents[eachrelcommentID]))
-          relcommtentContents.append(relcommtents_contents[eachrelcommentID])
-        #print("input -------------------------")
-        #print("relcommtents "+str(relcommtentContents))
-        #print("relQuestion_Content "+str([relQuestion_Content]))
-        results = calculateJob([relQuestion_Content], relcommtentContents)
-        #print("result " + str(results))
+        results = calculateJob([each_orgquestion_content], rel_comment_list)
+        # process result
         count = 0
-        f = open("subtaskA.pred", "a")
-        print("Result Size "+str(len(results)))
+
+        f = open("subtaskC.pred", "a")
+        for each_result in results:
+            print(str(each_orgquestion_id) + " " + str(rel_comment_ID_list[count]) + " " + str(count) + " " + str(
+                each_result) + " " + " false")
+            f.write(str(each_orgquestion_id) + " " + str(rel_comment_ID_list[count]) + " " + str(count) + " " + str(
+                each_result) + " " + " false")
+            f.write("\n")
+            count = count + 1
+
+
+def subteskB(org_questions, rel_questions):
+    # loop get each question
+    for eachOrgquestion in org_questions.keys():
+        orgQuestionID = eachOrgquestion
+        rel_question_list = []
+        rel_question_ID_list = []
+        for eachRelQuestion in rel_questions.keys():
+            if (orgQuestionID in eachRelQuestion):
+                rel_question_list.append(rel_questions[eachRelQuestion])
+                rel_question_ID_list.append(eachRelQuestion)
+
+        results = calculateJob([org_questions[orgQuestionID]], rel_question_list)
+        # process result
+        count = 0
+        f = open("subtaskB.pred", "a")
         for eachResult in results:
-          print(str(eachrelQuest) +" "+ str(relcommentIDs[count]) + " 0 " + str(eachResult) + " false")
-          f.write(str(eachrelQuest) +" "+ str(relcommentIDs[count]) + " 0 " + str(eachResult) + " false")
-          f.write("\n")
-          #print("Comment ID " + str(relcommentIDs[count]))
-          #print("Score " + str(results[eachResult]))
-          count = count + 1
+            print(
+                orgQuestionID + " " + str(rel_question_ID_list[count]) + " " + str(count) + " " + str(
+                    eachResult) + " false")
+            f.write(
+                orgQuestionID + " " + rel_question_ID_list[count] + " " + str(count) + " " + str(eachResult) + " false")
+            f.write("\n")
+            count = count + 1
 
 
-  """allRelQuestion = dataparser.parseData(contents)
+def subtaskA(relcommtents, relquests):
+    for each_rel_request in relquests:
 
-  print(allRelQuestion.keys())
-  threadPool = []
-  for eachKey in allRelQuestion:
-    print("Question: ",eachKey)
-    query_vector = []
-    query_vector.append(eachKey)
+        relQuestion = ""
+        relQuestion_Content = ""
+        for requestContent in each_rel_request:
+            relQuestion = requestContent
+            relQuestion_Content = each_rel_request[requestContent]
+        for eachrelQuest in relcommtents.keys():
+            if (eachrelQuest == relQuestion):
+                relcommtents_contents = relcommtents[eachrelQuest]
+                relcommentIDs = []
+                relcommtentContents = []
+                for eachrelcommentID in relcommtents_contents:
+                    relcommentIDs.append(eachrelcommentID)
+                    relcommtentContents.append(relcommtents_contents[eachrelcommentID])
 
-    allComment = allRelQuestion[eachKey]
-    print("allComment: ", str(allComment))
-    print("allComment size: ", len(allComment))
-    docVector = allComment
-    #gvsm.initi(docVector, query_vector)
-    #gvsm.mainProcess()
-    large = query_vector + docVector
-    result = calculateJob(query_vector, docVector)
-    #t = threading.Thread(target= calculateJob(query_vector, docVector))
-    #t.start()
-    #threadPool.append(t)
-"""
-  #for eachThread in threadPool:
-  #    print("wait for ", str(eachThread.getName()))
-  #    eachThread.join()
+                results = calculateJob([relQuestion_Content], relcommtentContents)
+
+                count = 0
+                f = open("subtaskA.pred", "a")
+                print("Result Size " + str(len(results)))
+                for eachResult in results:
+                    print(str(eachrelQuest) + "  " + str(relcommentIDs[count]) + "  " + str(count + 1) + " " + str(
+                        eachResult) + "  false")
+                    f.write(str(eachrelQuest) + "  " + str(relcommentIDs[count]) + "  " + str(count + 1) + " " + str(
+                        eachResult) + "  false")
+                    f.write("\n")
+
+                    count = count + 1
+
+
+if __name__ == '__main__':
+    dataparser = DataParser()
+    contents = dataparser.readData("datas/test_data/SemEval2017-task3-English-test-input.xml")
+
+    #subtask A
+    org_questions, all_comments = dataparser.parseSubtaskCData(contents)
+    subteskC(org_questions, all_comments)
+
+    # subtask B
+    org_questions, rel_questions = dataparser.parseSubtaskBData(contents)
+    subteskB(org_questions, rel_questions)
+
+    # subtask C
+    relcommtents, relquests = dataparser.parseSubtaskAData(contents)
+    subtaskA(relcommtents,relquests)
+
 

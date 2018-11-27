@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import json
+
 class DataParser:
 
     def readData(self, filepath):
@@ -7,21 +7,49 @@ class DataParser:
         allLines = fileoutput.read()
 
         return allLines
-       # while fileoutput.readline() !=
 
-    def parseSubtaskBData(self, content):
+    def parseSubtaskCData(self,content):
         xml = BeautifulSoup(content, features="xml")
         titles = xml.find_all('OrgQuestion')
-        #Quti
+        Orgquestion = dict()
+        AllRelcomment = dict()
         for title in titles:
             print("ORGQ_ID: " + title["ORGQ_ID"])
             print("ORGQ_ID Content: " + title.OrgQSubject.get_text())
+            threads = title.find_all('Thread')
+            Orgquestion[ title["ORGQ_ID"]] = title.OrgQSubject.get_text()
+
+            all_relcomment_list = []
+            for thread in threads:
+                relquestionObj = thread.find('RelQuestion')
+                print("RELQ_ID " + relquestionObj['RELQ_ID'])
+                relcomments = thread.find_all('RelComment')
+
+                for relcomment in relcomments:
+                    print("RELC_ID: ", relcomment['RELC_ID'])
+                    print("relcomment: ", relcomment.get_text())
+                    all_relcomment_list.append(relcomment.get_text())
+                    AllRelcomment[relcomment['RELC_ID']] = relcomment.get_text()
+            print("all_relcomment_list size: " + str(len(all_relcomment_list)))
+            #AllRelcomment[title["ORGQ_ID"]] = all_relcomment_list
+        return Orgquestion, AllRelcomment
+    def parseSubtaskBData(self, content):
+        xml = BeautifulSoup(content, features="xml")
+        titles = xml.find_all('OrgQuestion')
+        Orgquestion = dict()
+        RelQuestion = dict()
+        for title in titles:
+            print("ORGQ_ID: " + title["ORGQ_ID"])
+            print("ORGQ_ID Content: " + title.OrgQSubject.get_text())
+            Orgquestion[title["ORGQ_ID"]] = title.OrgQSubject.get_text()
             threads = title.find_all('Thread')
             for thread in threads:
                 relquestionObj = thread.find('RelQuestion')
                 print("RELQ_ID: " + relquestionObj['RELQ_ID'])
                 print("RELQ_Content: " + relquestionObj.RelQSubject.get_text())
+                RelQuestion[relquestionObj["RELQ_ID"]] = relquestionObj.RelQSubject.get_text()
 
+        return Orgquestion, RelQuestion
 
     def parseSubtaskAData(self, content):
         subtaskAdata = dict()
@@ -54,6 +82,7 @@ class DataParser:
 
                 #dicts[relquestion] = relcommentDic
                 recommtentsList[relquestionObj['RELQ_ID']] = relcommentDic
+
                 # print(thread["THREAD_SEQUENCE"])
                 # print(thread.get_text())
         return recommtentsList ,relquests
