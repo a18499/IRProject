@@ -53,11 +53,23 @@ class GVSM:
             a_split = a.replace('?', ' ').replace('(', ' ').replace(')', ' ').split(' ')
             a = a.replace('\n', '')
             print("a " + str([a]))
-            # 詞干提取
-            vectorizer = CountVectorizer(analyzer='word',token_pattern=u"(?u)\\b\\w*\\S*\\b")
-            X = vectorizer.fit_transform([a])
-            stemmed_tokens = [p_stemmer.stem(i) for i in a_split]
-            article_list.append(vectorizer.get_feature_names())
+            if(a == "=("):
+                article_list.append([a])
+            elif(a == "."):
+                article_list.append([a])
+            elif(a == ":)"):
+                article_list.append([a])
+            elif (a == "!!"):
+                article_list.append([a])
+            else:
+                #vectorizer = CountVectorizer(analyzer='word',token_pattern=u"(?u)\\b\\w*\\S*\\b")
+                vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08,token_pattern=u"\\b\\w*\\S*\\b",
+                                           use_idf=True)
+                X = vectorizer.fit_transform([a])
+                stemmed_tokens = [p_stemmer.stem(i) for i in a_split]
+
+                print(" vectorizer.get_feature_names() " + str(vectorizer.get_feature_names()))
+                article_list.append(vectorizer.get_feature_names())
 
         #print("article_list: " + str(article_list))
         #stemmed_tokens = [p_stemmer.stem(i) for i in tot_word]
@@ -73,14 +85,14 @@ class GVSM:
         # tf-idf
         average_idf = sum(map(lambda k: float(bm25Model.idf[k]), bm25Model.idf.keys())) / len(bm25Model.idf.keys())
         scores = bm25Model.get_scores(query_stemmed, average_idf)
-        #print('scores :', scores)
+        print('scores :', scores)
 
         count = 0
         result = dict()
         for eachScore in scores:
             result[corpus[count]] = eachScore
             count = count + 1
-        #print("result " + str(result))
+        print("result " + str(result))
         return result
     def myGVSM(self):
         vector = CountVectorizer()
