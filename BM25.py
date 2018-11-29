@@ -40,7 +40,7 @@ class BM25:
                 article_list.append([a])
             else:
 
-                vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08, token_pattern=u"\\b\\w*\\S*\\b",
+                vectorizer = TfidfVectorizer(stop_words='english', token_pattern=u"\\b\\w*\\S*\\b",
                                              use_idf=True)
                 vectorizer.fit_transform([a])
                 article_list.append(vectorizer.get_feature_names())
@@ -54,7 +54,7 @@ class BM25:
         # tf-idf
         average_idf = sum(map(lambda k: float(bm25Model.idf[k]), bm25Model.idf.keys())) / len(bm25Model.idf.keys())
         scores = bm25Model.get_scores(query_stemmed, average_idf)
-        print('scores :', scores)
+
 
         count = 0
         result = dict()
@@ -62,5 +62,5 @@ class BM25:
         for eachScore in scores:
             result[corpus[count]] = eachScore
             count = count + 1
-        print("result " + str(result))
+
         return scores

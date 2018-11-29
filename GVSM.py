@@ -4,10 +4,7 @@ import numpy as np
 import os
 from sklearn.feature_extraction.text import *
 from sklearn.metrics.pairwise import cosine_similarity
-from gensim import corpora
-from gensim.summarization import bm25
-from nltk.stem.porter import PorterStemmer
-import scipy.sparse as ss
+
 
 class GVSM:
     corpus = []
@@ -21,80 +18,7 @@ class GVSM:
 
 
         return "complete"
-    def testPM25(self):
-        p_stemmer = PorterStemmer()
 
-
-        article_row = [
-            'For the majority of bitcoin futures trading since their launch in December, the futures curves have been in steep contango, meaning that near-dated prices are below longer-dated prices,」 the analysts said',
-            'But according to Goldman, the recent price action in Bitcoin futures implied higher prices for longer-dated contracts — far in excess of the cost to borrow money.',
-            'Cboe futures contracts are also just based on one exchange — Gemini, run by the Winklevoss twins — whereas CME futures are based on a Bitcoin reference rate derived from an aggregate of major exchanges',
-        ]
-
-        article_list = []
-        #print("corpus " + str(corpus))
-        #bagWord = CountVectorizer()
-        #bagWord.fit_transform(corpus)
-        #print("features " + str(bagWord.get_feature_names()))
-        #tot_word = bagWord.get_feature_names()
-        bagQuery = CountVectorizer()
-        bagQuery.fit_transform(queryList)
-        tot_query = bagQuery.get_feature_names()
-        """for eachComment in corpus:
-            bagWord = CountVectorizer()
-            print("eachComment " + str(np.array(eachComment)))
-            bagWord.fit_transform(np.array(eachComment))
-            print("features " + str(bagWord.get_feature_names()))
-            tot_word = bagWord.get_feature_names()
-            article_list.append(tot_word)
-        """
-        for a in corpus:
-
-            a_split = a.replace('?', ' ').replace('(', ' ').replace(')', ' ').split(' ')
-            a = a.replace('\n', '')
-            #print("a " + str([a]))
-            if(a == "=("):
-                article_list.append([a])
-            elif(a == "."):
-                article_list.append([a])
-            elif(a == ":)"):
-                article_list.append([a])
-            elif (a == "!!"):
-                article_list.append([a])
-            else:
-                #vectorizer = CountVectorizer(analyzer='word',token_pattern=u"(?u)\\b\\w*\\S*\\b")
-                vectorizer = TfidfVectorizer(stop_words='english', min_df=0.08,token_pattern=u"\\b\\w*\\S*\\b",
-                                           use_idf=True)
-                X = vectorizer.fit_transform([a])
-                stemmed_tokens = [p_stemmer.stem(i) for i in a_split]
-
-                #print(" vectorizer.get_feature_names() " + str(vectorizer.get_feature_names()))
-                article_list.append(vectorizer.get_feature_names())
-
-        #print("article_list: " + str(article_list))
-        #stemmed_tokens = [p_stemmer.stem(i) for i in tot_word]
-        #article_list.append(stemmed_tokens)
-
-        query = ['bitcoin', 'prices', 'futur', 'winklevoss']
-        #print("queryList " + str(queryList))
-        query_stemmed = [p_stemmer.stem(i) for i in tot_query]
-        #print('query_stemmed :', query_stemmed)
-
-        # bm25模型
-        bm25Model = bm25.BM25(article_list)
-        # tf-idf
-        average_idf = sum(map(lambda k: float(bm25Model.idf[k]), bm25Model.idf.keys())) / len(bm25Model.idf.keys())
-        scores = bm25Model.get_scores(query_stemmed, average_idf)
-        print('scores :', scores)
-
-        count = 0
-        result = dict()
-
-        for eachScore in scores:
-            result[corpus[count]] = eachScore
-            count = count + 1
-        print("result " + str(result))
-        return scores
     def myGVSM(self):
         vector = CountVectorizer()
         Document_Freuency = vector.fit_transform(corpus)

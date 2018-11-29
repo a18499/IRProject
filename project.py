@@ -1,4 +1,4 @@
-
+import sys
 from DataParser import DataParser
 
 
@@ -12,8 +12,9 @@ def calculateJob(queryVector, docVector):
     return result
 
 
-def subteskC(org_questions, all_comments):
+def subtaskC(org_questions, all_comments):
     # loop get each question
+    print("Process subtask C ...")
     for eachorgquestion in org_questions.keys():
         each_orgquestion_id = eachorgquestion
         each_orgquestion_content = org_questions[eachorgquestion]
@@ -30,16 +31,17 @@ def subteskC(org_questions, all_comments):
 
         f = open("subtaskC.pred", "a")
         for each_result in results:
-            print(str(each_orgquestion_id) + " " + str(rel_comment_ID_list[count]) + " " + str(count) + " " + str(
-                each_result) + " " + " false")
+            #print(str(each_orgquestion_id) + " " + str(rel_comment_ID_list[count]) + " " + str(count) + " " + str(
+            #    each_result) + " " + " false")
             f.write(str(each_orgquestion_id) + " " + str(rel_comment_ID_list[count]) + " " + str(count) + " " + str(
                 each_result) + " " + " false")
             f.write("\n")
             count = count + 1
 
 
-def subteskB(org_questions, rel_questions):
+def subtaskB(org_questions, rel_questions):
     # loop get each question
+    print("Process subtask B ...")
     for eachOrgquestion in org_questions.keys():
         orgQuestionID = eachOrgquestion
         rel_question_list = []
@@ -54,9 +56,9 @@ def subteskB(org_questions, rel_questions):
         count = 0
         f = open("subtaskB.pred", "a")
         for eachResult in results:
-            print(
-                orgQuestionID + " " + str(rel_question_ID_list[count]) + " " + str(count) + " " + str(
-                    eachResult) + " false")
+            #print(
+            #    orgQuestionID + " " + str(rel_question_ID_list[count]) + " " + str(count) + " " + str(
+            #        eachResult) + " false")
             f.write(
                 orgQuestionID + " " + rel_question_ID_list[count] + " " + str(count) + " " + str(eachResult) + " false")
             f.write("\n")
@@ -64,6 +66,7 @@ def subteskB(org_questions, rel_questions):
 
 
 def subtaskA(relcommtents, relquests):
+    print("Process subtask A ...")
     for each_rel_request in relquests:
 
         relQuestion = ""
@@ -72,7 +75,7 @@ def subtaskA(relcommtents, relquests):
             relQuestion = requestContent
             relQuestion_Content = each_rel_request[requestContent]
         for eachrelQuest in relcommtents.keys():
-            if (eachrelQuest == relQuestion):
+            if eachrelQuest == relQuestion:
                 relcommtents_contents = relcommtents[eachrelQuest]
                 relcommentIDs = []
                 relcommtentContents = []
@@ -84,10 +87,10 @@ def subtaskA(relcommtents, relquests):
 
                 count = 0
                 f = open("subtaskA.pred", "a")
-                print("Result Size " + str(len(results)))
+                #print("Result Size " + str(len(results)))
                 for eachResult in results:
-                    print(str(eachrelQuest) + "  " + str(relcommentIDs[count]) + "  " + str(count + 1) + " " + str(
-                        eachResult) + "  false")
+                    #print(str(eachrelQuest) + "  " + str(relcommentIDs[count]) + "  " + str(count + 1) + " " + str(
+                    #    eachResult) + "  false")
                     f.write(str(eachrelQuest) + "  " + str(relcommentIDs[count]) + "  " + str(count + 1) + " " + str(
                         eachResult) + "  false")
                     f.write("\n")
@@ -96,19 +99,29 @@ def subtaskA(relcommtents, relquests):
 
 
 if __name__ == '__main__':
-    dataparser = DataParser()
-    contents = dataparser.readData("datas/test_data/SemEval2017-task3-English-test-input.xml")
 
-    #subtask A
-    org_questions, all_comments = dataparser.parseSubtaskCData(contents)
-    subteskC(org_questions, all_comments)
+    if(len(sys.argv)<2):
+        print("Usage: python3 project.py [input xml file path]")
+        sys.exit(0)
+
+    file_name = sys.argv[1]
+    dataparser = DataParser()
+    contents = dataparser.readData(file_name)
+
+    # subtask A
+    relcommtents, relquests = dataparser.parseSubtaskAData(contents)
+    subtaskA(relcommtents, relquests)
 
     # subtask B
     org_questions, rel_questions = dataparser.parseSubtaskBData(contents)
-    subteskB(org_questions, rel_questions)
+    subtaskB(org_questions, rel_questions)
 
-    # subtask C
-    relcommtents, relquests = dataparser.parseSubtaskAData(contents)
-    subtaskA(relcommtents,relquests)
+    #subtask C
+    org_questions, all_comments = dataparser.parseSubtaskCData(contents)
+    subtaskC(org_questions, all_comments)
+
+
+
+
 
 
