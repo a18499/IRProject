@@ -1,8 +1,8 @@
 IRModels
 
-Requirement  
+**Requirement**  
    language: python 3.6  
-   package:  
+   **package**:  
    lxml  
    sklearn  
    gensim  
